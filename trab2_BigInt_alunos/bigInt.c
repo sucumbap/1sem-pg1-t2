@@ -93,15 +93,30 @@ void big_from_long (BIG_INT big, long n)
  * Parâmetros:
  *   str - string de caracteres numéricos.
  *   big - é o BIG_INT a construir a partir de str
- * Retorno:
+ * Retorno: 
  *   A função retorna true se construiu o BIG_INT "big" com sucesso ou false 
  *   se foi encontrado na string algum caracter não numérico.  
  */
 bool big_from_string(BIG_INT big, const char str[]) 
 {
-   // FALTA IMPLEMNTAR 
-   return false;
+    str = str;
+    printf("%s", str);
+
+
+    for (int i = 0; str[i]!= '\0'; i++)
+    {
+        if(str[i]<'0' || str[i]>'9' || str[0]=='-') {
+
+    
+            return true; 
+
+        }       
+    }
+    //FALTA IMPLEMNTAR 
+    return false;
 }
+
+
 
 /**
  * Descrição:
@@ -115,6 +130,11 @@ bool big_from_string(BIG_INT big, const char str[])
  */
 int big_cmp_abs( const BIG_INT b1, const BIG_INT b2 )
 {
+
+    if (b1 < b2){ return -1;}
+    if (b1 > b2) {return 1;}
+    if (b1 == b2) {return 0;}
+ 
     // FALTA IMPLEMNTAR 
     return -1;
 }
@@ -132,6 +152,11 @@ int big_cmp_abs( const BIG_INT b1, const BIG_INT b2 )
  */
 int big_cmp( const BIG_INT b1, const BIG_INT b2 )
 {
+
+    if (b1 < b2){ return -1;}
+    if (b1 > b2) {return 1;}
+    if (b1 == b2) {return 0;}
+ 
     // FALTA IMPLEMNTAR 
     return -1;
 }
@@ -149,6 +174,7 @@ int big_cmp( const BIG_INT b1, const BIG_INT b2 )
  */
 bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 {
+    bm=b1-b2;
   // FALTA IMPLEMNTAR 
     return true;
 }
