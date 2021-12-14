@@ -99,21 +99,52 @@ void big_from_long (BIG_INT big, long n)
  */
 bool big_from_string(BIG_INT big, const char str[]) 
 {
-    str = str;
-    printf("%s", str);
+
+    int p=0; //irá percorrer o array de chars str
+    big[1] = BIG_POSITIVE;
+    if(str[0] == '-'){ big [1] = BIG_NEGATIVE; p=1; }
+    if(str[0] == '+'){ big [1] = BIG_POSITIVE; p=1; }
+ 
+    //agora fazer o percurso a cópia e a validação e conversão
+    for( ; str[p]!='\0'; ++p ) {
+    if (p>=MAX_DIGITS || str[p]<'0' || str[p]>'9' ) return false;
+    }
+    //acerto ao p caso o str tenha tido sinal no inicio
+    if( str[0] == '0' || str[0] == '+'){
+    --p;
+    big[0] = p;
+    }
+    //p foi acertado para o total de digitos
+    --p; //o p foi acertado para o ultimo indice de str
+
+    //printf("TESTE valor do p=%d\n",p);
+    //copiar de str para big
+    for( int i=2 ; p>=0; --p, ++i){// p é para str e o i é para o big
+        big[i] = str[p]-'0';
+    }
+
+    //printf("\nTESTE o big foi BEM Copiado\n");
+    big_show (big);
+    printf("\n");
+
+    return true;
 
 
-    for (int i = 0; str[i]!= '\0'; i++)
-    {
-        if(str[i]<'0' || str[i]>'9' || str[0]=='-') {
+    // str = str;
+    // printf("%s", str);
+
+
+    // for (int i = 0; str[i]!= '\0'; i++)
+    // {
+    //     if(str[i]<'0' || str[i]>'9' || str[0]=='-') {
 
     
-            return true; 
+    //         return true; 
 
-        }       
-    }
-    //FALTA IMPLEMNTAR 
-    return false;
+    //     }       
+    // }
+    // //FALTA IMPLEMNTAR 
+    // return false;
 }
 
 
@@ -131,12 +162,17 @@ bool big_from_string(BIG_INT big, const char str[])
 int big_cmp_abs( const BIG_INT b1, const BIG_INT b2 )
 {
 
-    if (b1 < b2){ return -1;}
-    if (b1 > b2) {return 1;}
-    if (b1 == b2) {return 0;}
- 
-    // FALTA IMPLEMNTAR 
-    return -1;
+    int r= b1[0] - b2[0];
+    if(r !=0) return r;
+    int t=b1[0]+1;//é o tamanho convertido em ultimo indice
+    for( ; t>=2; --t){
+    r = b1[t]-b2[t];
+    if(r!=0) return r;
+    }
+    return 0;
+
+    // // FALTA IMPLEMNTAR 
+    // return -1;
 }
 
 
@@ -153,12 +189,15 @@ int big_cmp_abs( const BIG_INT b1, const BIG_INT b2 )
 int big_cmp( const BIG_INT b1, const BIG_INT b2 )
 {
 
-    if (b1 < b2){ return -1;}
-    if (b1 > b2) {return 1;}
-    if (b1 == b2) {return 0;}
- 
-    // FALTA IMPLEMNTAR 
-    return -1;
+    int r= b1[1]-b2[1]; //verificar os sinais de b1 e b2
+    if(r!=0) return r;
+    r = big_cmp_abs( b1, b2); //têm o mesmosinal entre b1 e b2
+                            //podem ser 2 positivos ou dois negativos
+    if( b1[1] == BIG_POSITIVE) return r;//ambos positivos
+    return -r;
+
+    // // FALTA IMPLEMNTAR 
+    // return -1;
 }
 
 
@@ -174,7 +213,7 @@ int big_cmp( const BIG_INT b1, const BIG_INT b2 )
  */
 bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 {
-    bm=b1-b2;
+ 
   // FALTA IMPLEMNTAR 
     return true;
 }
@@ -210,8 +249,12 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
  */
 bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) 
 {
-    // FALTA IMPLEMNTAR 
-    return false;
+    if(b1[1] == b2[1]) {return big_add_aux(b1,b2,bm);}
+    if(big_cmp_abs(b1,b2)>=0){ return big_sub_aux(b1,b2,bm);} //subtração entre o b1 e o b2
+    else {
+    return big_sub_aux(b2,b1,bm); //subtração entre b2 e b1
+    }
+    return true;
 }
 
 /**
