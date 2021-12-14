@@ -102,19 +102,24 @@ bool big_from_string(BIG_INT big, const char str[])
 
     int p=0; //irá percorrer o array de chars str
     big[1] = BIG_POSITIVE;
-    if(str[0] == '-'){ big [1] = BIG_NEGATIVE; p=1; }
-    if(str[0] == '+'){ big [1] = BIG_POSITIVE; p=1; }
+    if(str[0] == '-'){ 
+        big [1] = BIG_NEGATIVE; 
+        p=1; 
+    }
+    if(str[0] == '+'){ 
+        big [1] = BIG_POSITIVE; 
+        p=1; 
+        }
  
     //agora fazer o percurso a cópia e a validação e conversão
     for( ; str[p]!='\0'; ++p ) {
-    if (p>=MAX_DIGITS || str[p]<'0' || str[p]>'9' ) return false;
+        if (p>=MAX_DIGITS || str[p]<'0' || str[p]>'9' ) return false;
     }
     //acerto ao p caso o str tenha tido sinal no inicio
     if( str[0] == '0' || str[0] == '+'){
-    --p;
-    big[0] = p;
-    }
-    //p foi acertado para o total de digitos
+        --p;
+        big[0] = p;
+    } //p foi acertado para o total de digitos
     --p; //o p foi acertado para o ultimo indice de str
 
     //printf("TESTE valor do p=%d\n",p);
@@ -169,7 +174,7 @@ int big_cmp_abs( const BIG_INT b1, const BIG_INT b2 )
     r = b1[t]-b2[t];
     if(r!=0) return r;
     }
-    return 0;
+        return 0;
 
     // // FALTA IMPLEMNTAR 
     // return -1;
@@ -196,6 +201,11 @@ int big_cmp( const BIG_INT b1, const BIG_INT b2 )
     if( b1[1] == BIG_POSITIVE) return r;//ambos positivos
     return -r;
 
+    // printf(b1);
+    // if (b1 < b2){ return -1;}
+    // if (b1 > b2) {return 1;}
+    // if (b1 == b2) {return 0;}
+ 
     // // FALTA IMPLEMNTAR 
     // return -1;
 }
@@ -230,7 +240,18 @@ bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */
 bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
-{
+{   
+    
+    if (b1[0] > b2[0]) {
+
+        for (int i = 0; i < )
+
+    } else if (b1[0] = b2[0]) {
+
+    } else {
+        
+    }
+    
     // FALTA IMPLEMNTAR 
     return false;
 }
@@ -249,10 +270,14 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
  */
 bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) 
 {
-    if(b1[1] == b2[1]) {return big_add_aux(b1,b2,bm);}
-    if(big_cmp_abs(b1,b2)>=0){ return big_sub_aux(b1,b2,bm);} //subtração entre o b1 e o b2
+    if(b1[1] == b2[1]) {
+        return big_add_aux(b1,b2,bm);
+    }
+    if(big_cmp_abs(b1,b2)>=0){ 
+        return big_sub_aux(b1,b2,bm);
+        }                             //subtração entre o b1 e o b2
     else {
-    return big_sub_aux(b2,b1,bm); //subtração entre b2 e b1
+        return big_sub_aux(b2,b1,bm); //subtração entre b2 e b1
     }
     return true;
 }
