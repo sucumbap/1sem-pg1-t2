@@ -238,23 +238,93 @@ bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
  *   bm - BIG_INT que guarda o resultado
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
- */
-bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
-{   
-    
-    if (b1[0] > b2[0]) {
+ */ 
 
-        for (int i = 0; i < )
 
-    } else if (b1[0] = b2[0]) {
 
-    } else {
-        
+bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {   
+
+    //if (b1[0] > b2[0]); // swap(str1, str2);
+
+    int n1 = b1[0];// n2 = b2[0];
+    int carry = 0;
+    for (int i = 0; i < n1; i++) {
+        int sum = ((b1[i] - '0') + (b2[i] - '0') + carry);
+        bm[i] = sum%10 + '0';
+        carry = sum/10;
     }
+    printf("\n");
+    big_show(bm);
+    printf("\n");
+
+
+
+    // char str[b1[0]];s
+    // //printf("\n\n%i\n\n",b1[0]);
+    // int p = 2;
+    // for( ; b1[p]!='\0'; ++p ) {
+    //     if (p>=MAX_DIGITS || b1[p]<'0' || b1[p]>'9' ) return false;
+    // }
+    // for( int i=2 ; p>=0; --p, ++i){
+    //     str[p] = b1[i];
+       
+    // }
+    // big_show(b1);
+    // printf("\n%s\npop\n", str);
+   
+    // if( b1[0] >= MAX_DIGITS  || b2[0] >= MAX_DIGITS ) { 
+    //     return false; 
+    // }
+
+
+    // bool reverse(const BIG_INT b, char str[]) { 
+    //     int j = b[0];
+
+    //     for (int i = 0; i <= b[0]; ++i, --j) {
+            
+    //         //big_show(b);
+    //         str[i] = b[j]-'0';
+    //         //printf("\n%s\n", str);
+    //     }
+    //     return true;
+    // }
     
-    // FALTA IMPLEMNTAR 
-    return false;
+    // char str1[b1[0]];
+    // reverse(b1,str1);
+    // printf("\n%s\n", str1);
+    // //big_show(b1);
+
+    return true;
 }
+    // int n1 = b1[0], n2 = b2[0], carry = 0;
+    // char str1[n1], str2[n2];
+    // int n = 0;
+    // for(int i, j = 2; b1[i]!= '\0' && b2[j]!= '\0'; i++, j++) {
+
+    //     int sum = ((b1[i]-'0') + (b2[j]-'0') + carry);
+
+
+    // }
+
+
+    // if (b1[0] > b2[0]) {
+
+    //     int s[b1[0]];
+
+    //     for (int i, j = 2; b1[i]!= '\0' && b2[j]!= '\0'; i++, j++) {
+            
+            
+    //     }
+        
+
+    // } else if (b1[0] == b2[0]) {
+
+    // } else {
+        
+    // }
+    
+
+
 
 
 /**
@@ -271,6 +341,7 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) 
 {
     if(b1[1] == b2[1]) {
+    
         return big_add_aux(b1,b2,bm);
     }
     if(big_cmp_abs(b1,b2)>=0){ 
@@ -307,10 +378,10 @@ bool big_sub( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
  * Retorno:
  *   A função retorna false se diferente de zero, caso contrário retorna true.
  */
-bool big_iszero(const BIG_INT b) 
-{
-    // FALTA IMPLEMNTAR  
-    return true;
+bool big_iszero(const BIG_INT b) {
+
+    if(b[2]!= 0) return false;
+    else return true;
 }
 
 /**
