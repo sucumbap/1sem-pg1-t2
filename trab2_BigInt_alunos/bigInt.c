@@ -216,10 +216,27 @@ int big_cmp( const BIG_INT b1, const BIG_INT b2 )
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */
-bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
-{
+bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
  
-  // FALTA IMPLEMNTAR 
+    bm[1] = b1[1];
+    int lenght = b1[0];
+    int carry = 0;
+    for(int i = 0;i < lenght;i++) {
+		int sum = b1[i+2] - b2[i+2] - carry;
+		if(sum < 0) {
+			carry = 1;
+			sum += 10;
+		} else {
+			carry = 0;
+		}
+		bm[i+2] = sum;
+	}
+	if(carry > 0) { 
+		lenght++;
+	}
+	if(lenght > MAX_DIGITS) return false;
+	bm[lenght + 1] = carry;
+	bm[0] = lenght;
     return true;
 }
 
@@ -241,14 +258,13 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
 
     int n1 = b1[0];
     int n2 = b2[0];
-    bool s1 = (big_signal(b1) == BIG_POSITIVE);
-    bool s2 = (big_signal(b2) == BIG_POSITIVE);
+    bm[1] = b1[1];
     int length = n1;
     int carry = 0;
     int sum =0;
     if (length > MAX_DIGITS) return false;
     if (n2 > n1) length = n2;
-    printf("\n%i:))\n%i:)\n", n1, n2);
+    //printf("\n%i:))\n%i:)\n", n1, n2);
     
 
     for (int i = n1 + 1, j = n2 + 1, p = 1; p <= length; i--, j--,p++) {
@@ -265,9 +281,6 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
             
             if(p == length) {
 
-                if (s1 && s2) {
-                    bm[1]=1;
-                }
 
                 bm[0] = p + 1;
 
@@ -289,10 +302,6 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
                 } else if(i < j) {
                 bm[j] = sum;
                 }
-                if (s1 && s2) {
-                    bm[1]=1;
-                }
-
             }
         } else {
             carry = 0;
@@ -302,9 +311,6 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
             bm[i] = sum;
             } else if(i < j) {
             bm[j] = sum;
-            }
-            if (s1 && s2) {
-                bm[1]=1;
             }
 
         }
@@ -337,7 +343,6 @@ bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
     if(b1[1] == b2[1]) {
     
         return big_add_aux(b1,b2,bm);
-        printf("\npop");
     }
     if(big_cmp_abs(b1,b2)>=0){ 
         return big_sub_aux(b1,b2,bm);
@@ -361,6 +366,18 @@ bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
  */
 bool big_sub( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 {
+    if(b1[1] == b2[1]) {
+    
+        return big_add_aux(b1,b2,bm);
+    }
+    if(big_cmp_abs(b1,b2)>=0){ 
+        return big_sub_aux(b1,b2,bm);
+        }                             //subtração entre o b1 e o b2
+    else {
+        return big_sub_aux(b2,b1,bm); //subtração entre b2 e b1
+    }
+    return true;
+
     // FALTA IMPLEMNTAR 
     return false;
 }
