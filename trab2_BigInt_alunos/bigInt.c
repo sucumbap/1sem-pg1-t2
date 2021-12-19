@@ -244,21 +244,94 @@ bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 
 bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {   
 
-    //if (b1[0] > b2[0]); // swap(str1, str2);
-
-    int n1 = b1[0];// n2 = b2[0];
+    int n1 = b1[0];
+    int n2 = b2[0];
+    bool s1 = (big_signal(b1) == BIG_POSITIVE);
+    bool s2 = (big_signal(b2) == BIG_POSITIVE);
+    int length = n1;
     int carry = 0;
-    for (int i = 0; i < n1; i++) {
-        int sum = ((b1[i] - '0') + (b2[i] - '0') + carry);
-        bm[i] = sum%10 + '0';
-        carry = sum/10;
+    int sum =0;
+    if (length > MAX_DIGITS) return false;
+    if (n2 > n1) length = n2;
+    
+
+    for (int i = n1 + 1, j = n2 + 1, p = 1; p <= length; i--, j--,p++) {
+        if (p == MAX_DIGITS) { return false; }
+        if (p-1 >= n1) sum = b2[j] + carry;
+        else if (p-1 >= n2) sum = b1[i] + carry;
+        else {sum = b1[i] + b2[j] + carry;
+        printf("\n%i:)\n", sum);
+        
+        }
+
+
+        if (sum > 9) {    
+            carry = 1;
+            sum -= 10;
+            
+            if(p == n1 || p == n2) {
+                printf("\n%i:)\n", sum);
+
+                if (s1 && s2) {
+                    bm[1]=1;
+                }
+
+                bm[0] = p + 1;
+
+                if(n1 >= n2) {
+                bm[2] = sum;
+                bm[3] = carry;
+                } else if(n1 < n2) {
+                bm[2] = sum;
+                bm[3] = carry;
+                } else {
+                    printf("\n%i:(\n", sum);
+                }
+            } else {
+
+                bm[0] = p;
+
+                if(i >= j) {
+                bm[i] = sum;
+                } else if(i < j) {
+                bm[j] = sum;
+                }
+                if (s1 && s2) {
+                    bm[1]=1;
+                }
+
+            }
+        } else {
+            carry = 0;
+            bm[0] = p;
+
+            if(i >= j) {
+            bm[i] = sum;
+            } else if(i < j) {
+            bm[j] = sum;
+            }
+            if (s1 && s2) {
+                bm[1]=1;
+            }
+
+        }
     }
+
+    printf("\n");
+    big_show(b1);
+    printf("\n");
+    big_show(b2);
     printf("\n");
     big_show(bm);
-    printf("\n");
+    printf("\n%i\n%i\n%i\npopo", bm[0],bm[3], bm[2]);
+
+    return true;
+}
 
 
-
+    // int sum = ((b1[i] - '0') + (b2[i] - '0') + carry);
+    // bm[i] = sum%10 + '0';
+    // carry = sum/10;
     // char str[b1[0]];s
     // //printf("\n\n%i\n\n",b1[0]);
     // int p = 2;
@@ -294,8 +367,7 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
     // printf("\n%s\n", str1);
     // //big_show(b1);
 
-    return true;
-}
+
     // int n1 = b1[0], n2 = b2[0], carry = 0;
     // char str1[n1], str2[n2];
     // int n = 0;
