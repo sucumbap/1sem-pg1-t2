@@ -99,19 +99,25 @@ void big_from_long (BIG_INT big, long n)
  */
 bool big_from_string(BIG_INT big, const char str[]) 
 {
-
+    
     int p=0; //irá percorrer o array de chars str
     big[1] = BIG_POSITIVE;
     if(str[0] == '-'){ 
         big [1] = BIG_NEGATIVE; 
         p=1; 
     }
+    if (str[0] == '0') {
+        big[0] = 1;
+        big[2] = 0;
+        return true;
+    }
     //agora fazer o percurso a cópia e a validação e conversão
-    for( ; str[p]!='\0'; ++p ) {
+    for(int i = p ; str[i]!=0; ++p, ++i) {
         if (p>=MAX_DIGITS || str[p]<'0' || str[p]>'9' ) return false;
+        //printf("\n%i\n", p);
     }
     //acerto ao p caso o str tenha tido sinal no inicio
-    if( str[0] == '0' || str[0] == '+' || str[0] == '-'){
+    if(str[0] == '+' || str[0] == '-'){
 
         big[0] = p-1;
         //printf("\n%i\n", p);
@@ -304,15 +310,16 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
         }
     }
 
-    printf("\n");
-    big_show(b1);
-    printf("\n");
-    big_show(b2);
-    printf("\n");
-    big_show(bm);
-    printf("\n%i\n%i\n%i\npopo", bm[0],bm[3], bm[2]);
+    // printf("\n");
+    // big_show(b1);
+    // printf("\n");
+    // big_show(b2);
+    // printf("\n");
+    // big_show(bm);
+    // printf("\n%i\n%i\n%i\npopo", bm[0],bm[3], bm[2]);
     return true;
 }
+
 
 /**
  * Descrição:  
