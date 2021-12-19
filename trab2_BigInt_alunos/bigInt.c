@@ -106,50 +106,39 @@ bool big_from_string(BIG_INT big, const char str[])
         big [1] = BIG_NEGATIVE; 
         p=1; 
     }
-    if(str[0] == '+'){ 
-        big [1] = BIG_POSITIVE; 
-        p=1; 
-        }
- 
     //agora fazer o percurso a cópia e a validação e conversão
     for( ; str[p]!='\0'; ++p ) {
         if (p>=MAX_DIGITS || str[p]<'0' || str[p]>'9' ) return false;
     }
     //acerto ao p caso o str tenha tido sinal no inicio
-    if( str[0] == '0' || str[0] == '+'){
-        --p;
+    if( str[0] == '0' || str[0] == '+' || str[0] == '-'){
+
+        big[0] = p-1;
+        //printf("\n%i\n", p);
+    } else {
+
         big[0] = p;
-    } //p foi acertado para o total de digitos
-    --p; //o p foi acertado para o ultimo indice de str
+        //printf("\n%i\n", p);
+    }
+    //p foi acertado para o total de digitos
+    //o p foi acertado para o ultimo indice de str
 
     //printf("TESTE valor do p=%d\n",p);
     //copiar de str para big
-    for( int i=2 ; p>=0; --p, ++i){// p é para str e o i é para o big
-        big[i] = str[p]-'0';
+    for( int i=2, j=1; j<p; ++i, j++ ) {
+
+        char num = str[p-j];
+
+        big[i] = num-'0';
+        return true;
     }
 
     //printf("\nTESTE o big foi BEM Copiado\n");
     big_show (big);
-    printf("\n");
-
-    return true;
 
 
-    // str = str;
-    // printf("%s", str);
-
-
-    // for (int i = 0; str[i]!= '\0'; i++)
-    // {
-    //     if(str[i]<'0' || str[i]>'9' || str[0]=='-') {
-
-    
-    //         return true; 
-
-    //     }       
-    // }
     // //FALTA IMPLEMNTAR 
-    // return false;
+    return false;
 }
 
 
@@ -253,24 +242,22 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
     int sum =0;
     if (length > MAX_DIGITS) return false;
     if (n2 > n1) length = n2;
+    printf("\n%i:))\n%i:)\n", n1, n2);
     
 
     for (int i = n1 + 1, j = n2 + 1, p = 1; p <= length; i--, j--,p++) {
         if (p == MAX_DIGITS) { return false; }
         if (p-1 >= n1) sum = b2[j] + carry;
         else if (p-1 >= n2) sum = b1[i] + carry;
-        else {sum = b1[i] + b2[j] + carry;
-        printf("\n%i:)\n", sum);
+        else sum = b1[i] + b2[j] + carry;
         
-        }
 
 
         if (sum > 9) {    
             carry = 1;
             sum -= 10;
             
-            if(p == n1 || p == n2) {
-                printf("\n%i:)\n", sum);
+            if(p == length) {
 
                 if (s1 && s2) {
                     bm[1]=1;
@@ -279,11 +266,11 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
                 bm[0] = p + 1;
 
                 if(n1 >= n2) {
-                bm[2] = sum;
-                bm[3] = carry;
+                bm[i] = sum;
+                bm[2] = carry;
                 } else if(n1 < n2) {
-                bm[2] = sum;
-                bm[3] = carry;
+                bm[j] = sum;
+                bm[2] = carry;
                 } else {
                     printf("\n%i:(\n", sum);
                 }
@@ -324,80 +311,8 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
     printf("\n");
     big_show(bm);
     printf("\n%i\n%i\n%i\npopo", bm[0],bm[3], bm[2]);
-
     return true;
 }
-
-
-    // int sum = ((b1[i] - '0') + (b2[i] - '0') + carry);
-    // bm[i] = sum%10 + '0';
-    // carry = sum/10;
-    // char str[b1[0]];s
-    // //printf("\n\n%i\n\n",b1[0]);
-    // int p = 2;
-    // for( ; b1[p]!='\0'; ++p ) {
-    //     if (p>=MAX_DIGITS || b1[p]<'0' || b1[p]>'9' ) return false;
-    // }
-    // for( int i=2 ; p>=0; --p, ++i){
-    //     str[p] = b1[i];
-       
-    // }
-    // big_show(b1);
-    // printf("\n%s\npop\n", str);
-   
-    // if( b1[0] >= MAX_DIGITS  || b2[0] >= MAX_DIGITS ) { 
-    //     return false; 
-    // }
-
-
-    // bool reverse(const BIG_INT b, char str[]) { 
-    //     int j = b[0];
-
-    //     for (int i = 0; i <= b[0]; ++i, --j) {
-            
-    //         //big_show(b);
-    //         str[i] = b[j]-'0';
-    //         //printf("\n%s\n", str);
-    //     }
-    //     return true;
-    // }
-    
-    // char str1[b1[0]];
-    // reverse(b1,str1);
-    // printf("\n%s\n", str1);
-    // //big_show(b1);
-
-
-    // int n1 = b1[0], n2 = b2[0], carry = 0;
-    // char str1[n1], str2[n2];
-    // int n = 0;
-    // for(int i, j = 2; b1[i]!= '\0' && b2[j]!= '\0'; i++, j++) {
-
-    //     int sum = ((b1[i]-'0') + (b2[j]-'0') + carry);
-
-
-    // }
-
-
-    // if (b1[0] > b2[0]) {
-
-    //     int s[b1[0]];
-
-    //     for (int i, j = 2; b1[i]!= '\0' && b2[j]!= '\0'; i++, j++) {
-            
-            
-    //     }
-        
-
-    // } else if (b1[0] == b2[0]) {
-
-    // } else {
-        
-    // }
-    
-
-
-
 
 /**
  * Descrição:  
@@ -415,6 +330,7 @@ bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
     if(b1[1] == b2[1]) {
     
         return big_add_aux(b1,b2,bm);
+        printf("\npop");
     }
     if(big_cmp_abs(b1,b2)>=0){ 
         return big_sub_aux(b1,b2,bm);
