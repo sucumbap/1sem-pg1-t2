@@ -251,79 +251,47 @@ bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */ 
-
-
-
 bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {   
-
-    int n1 = b1[0];
-    int n2 = b2[0];
     bm[1] = b1[1];
-    int length = n1;
-    int carry = 0;
-    int sum =0;
-    if (length > MAX_DIGITS) return false;
-    if (n2 > n1) length = n2;
-    //printf("\n%i:))\n%i:)\n", n1, n2);
-    
+	int carry = 0;
+	bool bg = true;
+	int n1 = b1[0];
+	int n2 = b2[0];
+	if (big_size(b1) > big_size(b2))  {
+		bg = false;
+		n1 = n2;
+		n2 = big_size(b1);
 
-    for (int i = n1 + 1, j = n2 + 1, p = 1; p <= length; i--, j--,p++) {
-        if (p == MAX_DIGITS) { return false; }
-        if (p-1 >= n1) sum = b2[j] + carry;
-        else if (p-1 >= n2) sum = b1[i] + carry;
-        else sum = b1[i] + b2[j] + carry;
-        
+	}
+	for(int i = 0;i < n1;i++) {
+		int sum = b1[i+2] + b2[i+2] + carry;
+		bm[i+2] = sum % 10;
+		carry = sum / 10;
+	} 
 
-
-        if (sum > 9) {    
-            carry = 1;
-            sum -= 10;
-            
-            if(p == length) {
-
-
-                bm[0] = p + 1;
-
-                if(n1 >= n2) {
-                bm[i] = sum;
-                bm[2] = carry;
-                } else if(n1 < n2) {
-                bm[j] = sum;
-                bm[2] = carry;
-                } else {
-                    printf("\n%i:(\n", sum);
-                }
-            } else {
-
-                bm[0] = p;
-
-                if(i >= j) {
-                bm[i] = sum;
-                } else if(i < j) {
-                bm[j] = sum;
-                }
-            }
-        } else {
-            carry = 0;
-            bm[0] = p;
-
-            if(i >= j) {
-            bm[i] = sum;
-            } else if(i < j) {
-            bm[j] = sum;
-            }
-
-        }
-    }
-
-    // printf("\n");
-    // big_show(b1);
-    // printf("\n");
-    // big_show(b2);
-    // printf("\n");
-    // big_show(bm);
-    // printf("\n%i\n%i\n%i\npopo", bm[0],bm[3], bm[2]);
-    return true;
+	for(int i = n1;i < n2; i++) {
+		int num = 0;
+		if(bg) {
+			num = b2[i+2];
+		} else {
+			num = b1[i+2];
+		}
+		int sum = num + carry;
+		bm[i+2] = sum % 10;
+		carry = sum / 10;
+	}
+	if(carry > 0) {
+		n2++;
+	} else {
+		carry = bm[n2+1];
+	}
+	if(n2 > 255) {
+		bm[0] = 255; 
+		return false;
+	}
+	bm[0] = n2;
+	bm[n2 + 1] = carry;
+   return true; 
 }
 
 
@@ -338,10 +306,8 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */
-bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) 
-{
+bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
     if(b1[1] == b2[1]) {
-    
         return big_add_aux(b1,b2,bm);
     }
     if(big_cmp_abs(b1,b2)>=0){ 
@@ -367,7 +333,6 @@ bool big_add( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 bool big_sub( const BIG_INT b1, const BIG_INT b2, BIG_INT bm )
 {
     if(b1[1] == b2[1]) {
-    
         return big_add_aux(b1,b2,bm);
     }
     if(big_cmp_abs(b1,b2)>=0){ 
@@ -407,10 +372,40 @@ bool big_iszero(const BIG_INT b) {
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */
-bool big_mul_digit( const BIG_INT b1, int n, BIG_INT bm) 
-{
-    // FALTA IMPLEMNTAR 
-    return false;
+bool big_mul_digit( const BIG_INT b1, int n, BIG_INT bm) {
+    bm[0] = b1[0];
+	if(big_size(b1) < 1 || big_size(b1) >= 255) return false;
+	if((big_signal(b1) == BIG_POSITIVE && n >= 0) || (big_signal(b1) == BIG_NEGATIVE && n < 0)) {
+		bm[1] = BIG_POSITIVE;
+	} else {
+		bm[1] = BIG_NEGATIVE;
+	}
+	if(n < 0) n = -n;
+	bool is_zero = true;
+	int carry = 0;
+	int size = big_size(b1);
+	for(int i = 0;i < size;i++) {
+		int res = b1[i+2] * n + carry;
+		if(is_zero && res != 0) {
+			is_zero = false;
+		}
+		bm[i+2] = res % 10;
+		carry = res / 10;
+	} 
+	for(int i = 0;carry > 0 && size <= 255;i++) {
+		bm[size + 2] = carry % 10;
+		carry /= 10;
+		size++;
+	}
+	if(is_zero) {
+		size = 0;
+	}
+	if(size > 255) {
+		bm[0] = 255; 
+		return false;
+	}
+	bm[0] = size;
+   return true; 
 }
 
 
@@ -424,10 +419,24 @@ bool big_mul_digit( const BIG_INT b1, int n, BIG_INT bm)
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */
-bool big_mult_power10( BIG_INT b1, int factor )
-{
-    // FALTA IMPLEMNTAR 
-    return false;
+bool big_mult_power10( BIG_INT b1, int factor ) {
+
+    if(big_size(b1) == 0) {
+		b1[0] = 1;
+		b1[1] = BIG_POSITIVE;
+		b1[2] = 0;		
+		return true;
+	}
+	if(factor == 0) return true;
+    int size = big_size(b1) + factor;
+    bool bm = false;
+    if(size > 255) {size = 255;bm = true;} 
+	for(int i = size - factor; >= 0; --) {
+		b1[i + factor + 2] = b1[i + 2];
+		b1[i + 2] = 0;
+	}	
+	b1[0] = size;
+    return !bm;
 }
 
 /**
@@ -441,10 +450,24 @@ bool big_mult_power10( BIG_INT b1, int factor )
  * Retorno:
  *   A função retorna false se ocorrer overflow, caso contrário retorna true.
  */ 
-bool big_mul( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) 
-{
-    // FALTA IMPLEMNTAR 
-    return true;
+bool big_mul( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
+    
+	bool s1 = true;
+	BIG_INT carry = {1, BIG_POSITIVE, 0};
+	int s = 1;
+	if(b2[1] == BIG_NEGATIVE) s = -1;
+    bm[0] = 0;
+	bm[1] = BIG_POSITIVE;
+
+	for(int i = 0;i < b2[0];i++) {
+		s1 &= big_mul_digit(b1, b2[i+2] * s, carry);
+		s1 &= big_mult_power10(carry, i);
+
+		for(int j = 1, p = 0; p < i;p++, j *= 10);
+		s1 &= big_add_aux(bm, carry, bm);
+		bm[1] = carry[1];
+	}
+    return s1;
 }
  
  
