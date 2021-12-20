@@ -254,11 +254,11 @@ bool big_sub_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
 bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {   
     bm[1] = b1[1];
 	int carry = 0;
-	bool bg = true;
+	bool bp = true;
 	int n1 = b1[0];
 	int n2 = b2[0];
-	if (big_size(b1) > big_size(b2))  {
-		bg = false;
+	if (n1 > n2)  {
+		bp = false;
 		n1 = n2;
 		n2 = big_size(b1);
 
@@ -268,10 +268,9 @@ bool big_add_aux( const BIG_INT b1, const BIG_INT b2, BIG_INT bm ) {
 		bm[i+2] = sum % 10;
 		carry = sum / 10;
 	} 
-
 	for(int i = n1;i < n2; i++) {
 		int num = 0;
-		if(bg) {
+		if(bp) {
 			num = b2[i+2];
 		} else {
 			num = b1[i+2];
